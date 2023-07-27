@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <input type="text" id="nickname" placeholder="Nickname"/>
+    <button onclick="newPlayer()">Start</button>
+    <button onclick="newLobby()">Create lobby</button>
+    <br>
+    <input type="text" id="lobby_id" placeholder="Lobby id"/>
+    <button onclick="joinLobby()">Join</button>
+
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8001/");
+        socket.addEventListener('open', function (event) {
+            
+
+            // socket.send(JSON.stringify(testPayload));
+        });
+        socket.addEventListener('message', function (event) {
+            console.log('Message from server ', event.data);
+        });
+
+        const newPlayer = () => {
+            const name = document.getElementById("nickname").value;
+            const newPlayerPayload = {
+                "event": "new_player",
+                "payload": {
+                    "nickname": name
+                }
+            }
+
+            socket.send(JSON.stringify(newPlayerPayload));
+        }
+        const newLobby = () => {
+            const newLobbyPayload = {
+                "event": "create_lobby",
+                "payload": {}
+            }
+            socket.send(JSON.stringify(newLobbyPayload));
+        }
+        const joinLobby = () => {
+            const lobby_id = document.getElementById("lobby_id").value;
+            const joinLobbyPayload = {
+                "event": "join_lobby",
+                "payload": {
+                    "id": lobby_id
+                }
+            }
+
+            socket.send(JSON.stringify(joinLobbyPayload));
+        }
+    </script>
+</body>
+</html>

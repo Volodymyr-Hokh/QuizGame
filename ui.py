@@ -1,4 +1,5 @@
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 from quiz_brain import QuizBrain
 
 THEME_COLOR = "#375362"
@@ -10,24 +11,24 @@ class QuizInterface:
     def __init__(self, quiz_brain: QuizBrain):
         self.quiz = quiz_brain
 
-        self.window = Tk()
+        self.window = tk.Tk()
         self.window.title("QuizApp")
         self.window.config(padx=20, pady=20, bg=THEME_COLOR)
 
-        self.canvas = Canvas(width=300, height=250)
+        self.canvas = tk.Canvas(width=300, height=250)
         self.question_text = self.canvas.create_text(150, 125, text="Some question text", font=FONT, width=280)
         self.canvas.grid(column=0, row=1, columnspan=2, pady=50)
 
-        self.score_text = Label(text=f"Score: {0}", font=("Arial", 12, "italic"))
+        self.score_text = tk.Label(text=f"Score: {0}", font=("Arial", 12, "italic"))
         self.score_text.config(bg=THEME_COLOR, fg="White")
         self.score_text.grid(column=1, row=0)
 
-        true_img = PhotoImage(file="./images/true.png")
-        self.true_button = Button(image=true_img, command=self.user_answer_true, highlightthickness=0)
+        true_img = tk.PhotoImage(file="./images/true.png")
+        self.true_button = tk.Button(image=true_img, command=self.user_answer_true, highlightthickness=0)
         self.true_button.grid(column=0, row=3)
 
-        false_img = PhotoImage(file="./images/false.png")
-        self.false_button = Button(image=false_img, command=self.user_answer_false, highlightthickness=0)
+        false_img = tk.PhotoImage(file="./images/false.png")
+        self.false_button = tk.Button(image=false_img, command=self.user_answer_false, highlightthickness=0)
         self.false_button.grid(column=1, row=3)
 
         self.get_next_question()
@@ -60,3 +61,22 @@ class QuizInterface:
         self.score_text.config(text=f"Score: {self.quiz.score}")
         self.window.after(1000, self.get_next_question)
 
+
+class StartInterface:
+    def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("QuizApp")
+        self.window.config(padx=20, pady=20, bg=THEME_COLOR)
+
+        # root = tk.Tk()
+
+        fruits = ["apple", "banana", "orange", "grape"]
+        combobox = ttk.Combobox(values=fruits)
+        combobox.pack()
+
+        self.window.mainloop()
+
+
+
+# if __name__ == "__main__":
+#     ui = StartInterface()

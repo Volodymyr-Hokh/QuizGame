@@ -5,7 +5,6 @@ class QuizBrain:
 
     def __init__(self, q_list):
         self.question_number = 0
-        self.score = 0
         self.question_list = q_list
         self.current_question = None
 
@@ -21,8 +20,16 @@ class QuizBrain:
     def check_answer(self, user_answer):
         correct_answer = self.current_question.answer
         if user_answer.lower() == correct_answer.lower():
-            self.score += 1
             return True
         else:
             return False
 
+
+class Answer:
+    def __init__(self, question, user_answer):
+        self.question = question
+        self.user_answer = user_answer
+
+    @property
+    def is_correct(self):
+        return self.question.answer == self.user_answer
