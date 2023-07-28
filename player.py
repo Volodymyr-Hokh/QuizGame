@@ -18,7 +18,10 @@ class Player:
             self.score += 1
 
     def answer(self, user_answer):
-        self.lobby.amount_answers += 1
+        if self in self.lobby.answered:
+            return
+        
+        self.lobby.answered.append(self)
         question = self.lobby.quiz.current_question
         answer = Answer(question, user_answer)
         self.add_answer(answer)
