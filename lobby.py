@@ -35,6 +35,7 @@ class Lobby:
 
     def start(self):
         self.game_started = True
+        self.quiz = QuizBrain()
 
     async def broadcast(self, data):
         for player in self.players:

@@ -1,6 +1,6 @@
 import html
+import requests
 
-from data import question_data
 from question_model import Question
 
 class GameOver(Exception):
@@ -13,12 +13,24 @@ class QuizBrain:
         self.question_number = 0
         self.question_list = []
         self.current_question = None
+        question_data = self.get_questions()
 
         for question in question_data:
             question_text = question["question"]
             question_answer = question["correct_answer"]
             new_question = Question(question_text, question_answer)
             self.question_list.append(new_question)
+
+    def get_questions(self):
+        parameters = {
+            "amount": 10,
+            "type": "boolean",
+        }
+
+        response = requests.get(url="https://opentdb.com/api.php", params=parameters)
+        question_data = response.json()["results"]
+        return question_data
+
 
     def still_has_questions(self):
         return self.question_number < len(self.question_list)

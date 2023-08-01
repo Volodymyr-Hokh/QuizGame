@@ -1,7 +1,9 @@
 import asyncio
 from dataclasses import dataclass
 import json
+import signal
 
+import http
 import websockets
 
 from lobby import Lobby
@@ -106,8 +108,6 @@ class EventHandler(WebsocketHandler):
         lobby = context.join_lobby(id)
         await lobby.send_updates()
         
-        
-
     def _create_lobby(self, admin):
         lobby = Lobby(admin)
         admin.lobby = lobby
@@ -137,16 +137,31 @@ class EventHandler(WebsocketHandler):
             except GameOver:
                 context.lobby.game_over()
                 await context.lobby.send_updates(msg="Game over")
-                
-            
 
+
+async def handle_request(path, headers):
+    response = None
+    with open(f"frontend/{path}", "rb") as file:
+        response = file.read()
+    print(path, headers)
+    return http.HTTPStatus.OK, [], response + b"\n"
+
+                
 
 async def main():
-    handler = EventHandler()
-    server = await websockets.serve(handler.handle, "0.0.0.0", 8001)
+    loop = asyncio.get_running_loop()
+    stop = loop.create_future()
+    # loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
-    print("WebSocket server started.")
-    await server.wait_closed()
+    handler = EventHandler()
+
+    async with websockets.serve(
+        handler.handle,
+        host="",
+        port=8080,
+        process_request=handle_request,
+    ):
+        await stop
 
 
 if __name__ == "__main__":
