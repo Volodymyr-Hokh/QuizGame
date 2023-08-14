@@ -46,7 +46,28 @@ class WebsocketHandler:
         raise NotImplementedError
     
 
-class EventHandler(WebsocketHandler):
+
+class SanicWebsocketHandler(WebsocketHandler):
+    active_connections = []
+
+    async def handle(self, request, websocket):
+        self.active_connections.append(websocket)
+        print(self.active_connections)
+        asyncio.create_task(self.on_connect(websocket))
+
+        try:
+            while True:
+                message = await websocket.recv()
+                asyncio.create_task(self.proceed_message(websocket, message))
+
+        except Exception as e:
+            print(f"WebSocket error: {e}")
+        finally:
+            asyncio.create_task(self.on_disconnect(websocket))
+            self.active_connections.remove(websocket)
+    
+
+class EventHandler(SanicWebsocketHandler):
     players = {}
     lobbies = {}
     allowed_events = ["new_player",
